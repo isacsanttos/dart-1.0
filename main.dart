@@ -27,9 +27,7 @@ class Natural extends Alimento {
       List<String> cientifico, String ingles, String grupo)
       : super(codigo, nome, cientifico, ingles, grupo);
 
-  String toString(){
-    return"Nome l: $validade";
-  }
+ 
 }
 
 void arquivotxt(
