@@ -10,14 +10,23 @@ class Alimento {
   String grupo;
   Alimento(this.codigo, this.nome, this.cientifico, this.ingles, this.grupo);
 
+  @override
+  String toString() {
+    return "Codigo: ${this.codigo} | Nome: ${this.nome} | Nome Cientifico: ${this.cientifico} | Inglês: ${this.ingles} | Grupo:${this.grupo}";
+  }
 }
 
 class Industrializado extends Alimento {
-  String marca;
+  final String marca;
 
   Industrializado(this.marca, String codigo, List<String> nome,
       List<String> cientifico, String ingles, String grupo)
       : super(codigo, nome, cientifico, ingles, grupo);
+
+  @override
+  String toString() {
+    return "${super.toString()} | Marca do fabricante: ${this.marca}";
+  }
 }
 
 class Natural extends Alimento {
@@ -27,90 +36,36 @@ class Natural extends Alimento {
       List<String> cientifico, String ingles, String grupo)
       : super(codigo, nome, cientifico, ingles, grupo);
 
- 
+  @override
+  String toString() {
+    return "${super.toString()} | Validade: ${this.validade}";
+
 }
 
-void arquivotxt(
-    List<Industrializado> industrializados, List<Natural> naturais) {
-  final file = File("listaAlimentosIsac.txt");
-  String arquivo = "Alimentos Industrializados\n";
-  for (Industrializado industrializado in industrializados) {
-    arquivo +=
-        "Codigo: ${industrializado.codigo} | Nome: ${industrializado.nome} | Nome Cientifico: ${industrializado.cientifico} | Inglês: ${industrializado.ingles} | Grupo:${industrializado.grupo} | Marca:${industrializado.marca} " +
-            "\n";
-  }
-  arquivo += "Alimentos Naturais\n";
-  for (Natural natural in naturais) {
-    arquivo +=
-        "Codigo: ${natural.codigo} | Nome: ${natural.nome} | Nome Cientifico: ${natural.cientifico} | Inglês: ${natural.ingles} | Grupo:${natural.grupo} | Validade:${natural.validade}" +
-            "\n";
-  }
-  print("arquivo salvo com sucesso");
 
-  file.writeAsStringSync(arquivo);
-}
-
-void main(List<String> args) {
-  List<Alimento> alimentos = [];
-  List<Industrializado> industrializados = [];
-  List<Natural> naturais = [];
-
-  int option = -1;
-
-  do {
-    option = showMenu();
-
-    switch (option) {
-      case 1:
-        final alimento = createAlimento();
-        alimentos.add(alimento);
-        break;
-
-      case 2:
-        final industrializado = createIndustrializado();
-        industrializados.add(industrializado);
-        break;
-
-      case 3:
-        final natural = createNatural();
-        naturais.add(natural);
-        break;
-
-      case 4:
-        print("Alimentos");
-        showListAlimentos(alimentos);
-        print("Alimentos Industrializados");
-        showListIndustrializados(industrializados);
-        print("Alimentos Naturais");
-        showListNaturais(naturais);
-        break;
-
-      case 5:
-        arquivotxt(industrializados, naturais);
-        break;
-
-      case 0:
-        break;
-
-      default:
-        print("Comando invalido");
-    }
-  } while (option != 0);
 }
 
 int showMenu() {
   print("++++MENU++++");
-  print("1 - Para cadastrar alimento");
-  print("2 - Para adicionar alimento Industrializados");
-  print("3 - Para adicionar alimento naturais");
-  print("4 - Para ver lista de alimentos cadastrados");
-  print("5 - Para salvar em um documento de texto");
-  print("0 - Finalizar Proframa");
+  print("1 - Para adicionar alimento");
+  print("2 - Para ver lista de alimentos cadastrados");
+  print("3 - Salvar dados em arquivo");
+  print("0 - Finalizar programa");
+  int option = int.parse(stdin.readLineSync());
+  return option;
+}
+
+int showCreateMenu() {
+  print("++++MENU DE CRIAÇÃO++++");
+  print("1 - Cadastrar alimento industrializado");
+  print("2 - Cadastrar alimento natural");
+  print("0 - Voltar");
   int option = int.parse(stdin.readLineSync());
   return option;
 }
 
 Alimento createAlimento() {
+  int option = showCreateMenu();
   print("\n Cadastre os alimentos:");
   print(" Digite o codigo:");
   String codigo = stdin.readLineSync();
@@ -127,92 +82,82 @@ Alimento createAlimento() {
   print("Digite o grupo:");
   String grupo = stdin.readLineSync();
 
-  return Alimento(
-    codigo,
-    nome.split(','),
-    cientifico.split(','),
-    ingles,
-    grupo,
-  );
-}
+  switch (option) {
+    case 1:
+      print("Digite a marca do fabricante");
+      String marca = stdin.readLineSync();
 
-void showListAlimentos(List<Alimento> alimentos) {
-  for (Alimento alimento in alimentos) {
-    print(
-        "Codigo: ${alimento.codigo} | Nome: ${alimento.nome} | Nome Cientifico: ${alimento.cientifico} | Inglês: ${alimento.ingles} | Grupo:${alimento.grupo}");
+      return Industrializado(
+        codigo,
+        cientifico,
+        nome.split(','),
+        ingles.split(','),
+        grupo,
+        marca,
+      );
+      break;
+    case 2:
+      print("Digite a validade no formado yyyy-MM-dd (2021-09-01)");
+      String validade = stdin.readLineSync();
+
+      return Natural(
+          codigo,
+          cientifico,
+          nome.split(','),
+          ingles.split(','),
+          grupo,
+          validade );
+
+    default:
+      return null;
   }
 }
 
-Industrializado createIndustrializado() {
-  print("\n Alimento Industrializados:");
-
-  print("Digite o codigo do alimento:");
-  String codigo = stdin.readLineSync();
-
-  print("Digite o nome:");
-  String nome = stdin.readLineSync();
-
-  print("Digite o nome científico:");
-  String cientifico = stdin.readLineSync();
-
-  print("Digite o nome em inglês:");
-  String ingles = stdin.readLineSync();
-
-  print("Digite o grupo:");
-  String grupo = stdin.readLineSync();
-  print("Digite a marca do Fabricante:");
-  String marca = stdin.readLineSync();
-
-  return Industrializado(
-    marca,
-    codigo,
-    nome.split(','),
-    cientifico.split(','),
-    ingles,
-    grupo,
-  );
-}
-
-void showListIndustrializados(List<Industrializado> industrializados) {
-  for (Industrializado industrializado in industrializados) {
-    print(
-        "Codigo: ${industrializado.codigo} | Nome: ${industrializado.nome} | Nome Cientifico: ${industrializado.cientifico} | Inglês: ${industrializado.ingles} | Grupo:${industrializado.grupo} | Marca:${industrializado.marca}");
+void writeFile(List<Alimento> alimentos) {
+  final file = File("arquivo.txt");
+  String arquivo = "";
+  for (var alimento in alimentos) {
+    arquivo += (alimento.toString()) + "\n";
+    file.writeAsStringSync(arquivo);
   }
+  print("arquivo salvo com sucesso");
 }
-
-createNatural() {
-  print("\n Alimento Naturais:");
-  print("Digite o codigo:");
-  String codigo = stdin.readLineSync();
-
-  print("Digite o nome:");
-  String nome = stdin.readLineSync();
-
-  print("Digite o nome cientifico:");
-  String cientifico = stdin.readLineSync();
-
-  print("Digite o nome em ingles:");
-  String ingles = stdin.readLineSync();
-
-  print("Digite o grupo:");
-  String grupo = stdin.readLineSync();
-
-  print("Digite a validade:");
-  String validade = stdin.readLineSync();
-  return Natural(
-    validade,
-    codigo,
-    nome.split(','),
-    cientifico.split(','),
-    ingles,
-    grupo,
-  );
-}
-
-void showListNaturais(List<Natural> naturais) {
-  for (Natural natural in naturais) {
-    print(
-        "Codigo: ${natural.codigo} | Nome: ${natural.nome} | Nome Cientifico: ${natural.cientifico} | Inglês: ${natural.ingles} | Grupo:${natural.grupo} | Validade:${natural.validade}");
+  void showListAlimentos(List<Alimento> alimentos) {
+    for (Alimento alimento in alimentos) {
+      print(alimento.toString());
+    }
   }
-}
+
+  void main(List<String> args) {
+    List<Alimento> alimentos = [];
+
+    int option = -1;
+
+    do {
+      option = showMenu();
+
+      switch (option) {
+        case 1:
+          final alimento = createAlimento();
+          alimentos.add(alimento);
+          break;
+
+        case 2:
+          print("Alimentos");
+          showListAlimentos(alimentos);
+          break;
+
+        case 3:
+          writeFile(alimentos);
+          break;
+
+        case 0:
+          break;
+
+        default:
+          print("Comando invalido");
+      }
+    } while (option != 0);
+  }
+
 
